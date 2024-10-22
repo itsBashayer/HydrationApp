@@ -82,7 +82,7 @@ struct NotificationPreferencesView: View {
 
                 HStack {
                     Spacer()
-                    NavigationLink(destination: DestinationView()) {
+                    NavigationLink(destination: WaterIntakeView()) {
                         Text("Start")
                             .padding(.vertical, 10)
                             .frame(width: 360, height: 50)
