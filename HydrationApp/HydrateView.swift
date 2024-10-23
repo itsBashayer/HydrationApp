@@ -3,25 +3,24 @@
 //  HydrationApp
 //
 //  Created by BASHAER AZIZ on 18/04/1446 AH.
-
 import SwiftUI
 
 struct HydrateView: View {
     @State private var inputText: String = ""
+    @State private var dailyWaterIntake: Double? = nil
 
     var body: some View {
         NavigationView {
             VStack(alignment: .leading) {
-                Spacer()
 
                 Image(systemName: "drop.fill")
                     .font(.system(size: 80))
                     .foregroundColor(Color(red: 0.192, green: 0.68, blue: 0.903))
-                    .padding(.bottom, 5.0)
+                    .padding(.top, 100)
+
                 Text("Hydrate")
                     .font(.title)
                     .fontWeight(.semibold)
-                   
 
                 Text("Start with Hydrate to record and track your water intake daily based on your needs and stay hydrated")
                     .font(.system(size: 19))
@@ -31,6 +30,7 @@ struct HydrateView: View {
                 HStack {
                     Text("Body weight").padding()
                     TextField("Value", text: $inputText)
+                        .keyboardType(.decimalPad)
                     if inputText.isEmpty {
                         Button(action: {
                             inputText = ""
@@ -38,30 +38,48 @@ struct HydrateView: View {
                             Image(systemName: "xmark.circle.fill")
                                 .foregroundColor(.gray)
                         }
-                        .padding(.trailing, 10)// x sighn
+                        .padding(.trailing, 10) // علامة X
                     }
-                }.frame(height: 20)
-                    .padding() // Add padding around the HStack
-                    .background(Color(red: 0.949, green: 0.949, blue: 0.971)) // Set the background color here
-                    .cornerRadius(10) // Optional: add rounded corners
+                }
+                .frame(height: 20)
+                .padding()
+                .background(Color(red: 0.949, green: 0.949, blue: 0.971))
+                .cornerRadius(10)
 
-               
+                
+                if let waterIntake = dailyWaterIntake {
+                    Text("Daily Water Intake: \(waterIntake, specifier: "%.1f") liters")
+                        .font(.headline)
+                        .padding(.top)
+                }
 
                 Spacer()
 
-                NavigationLink(destination: NotificationPreferencesView()) {
+                // تعديل NavigationLink للانتقال إلى WaterIntakeView
+//                NavigationLink(destination: WaterIntakeView(dailyWaterIntake: dailyWaterIntake ?? 0)) {
                     Text("Next")
                         .padding()
                         .frame(maxWidth: .infinity)
                         .background(Color(red: 0.192, green: 0.68, blue: 0.903))
                         .foregroundColor(.white)
                         .cornerRadius(10)
+                        .simultaneousGesture(TapGesture().onEnded {
+                            calculateWaterIntake()
+                        })
                 }
                 .padding(.top)
-
             }
             .padding()
         }
+    //}
+
+    
+    private func calculateWaterIntake() {
+        guard let weight = Double(inputText) else {
+            dailyWaterIntake = nil
+            return
+        }
+        dailyWaterIntake = weight * 0.03 
     }
 }
 
