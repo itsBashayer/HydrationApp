@@ -1,15 +1,10 @@
-//
-//  WaterIntakeView.swift
-//  HydrationApp
-//
-//  Created by BASHAER AZIZ on 19/04/1446 AH.
-
 import SwiftUI
 
 struct WaterIntakeView: View {
     @State private var currentWaterIntake: Double = 0.0
-    var dailyWaterIntakeGoal: Double 
-
+    @State private var dailyWaterIntakeGoal: Double = 2.7 // Set a default value
+    let defaults = UserDefaults.standard
+    
     private let icons = [
         "zzz",
         "tortoise.fill",
@@ -91,6 +86,12 @@ struct WaterIntakeView: View {
             }
         }
         .padding()
+        .onAppear {
+            dailyWaterIntakeGoal = defaults.double(forKey: "waterIntake")
+            if dailyWaterIntakeGoal == 0 { // Set a default if not found
+                dailyWaterIntakeGoal = 2.7
+            }
+        }
     }
 
     private func getCurrentIcon() -> String {
@@ -146,6 +147,6 @@ struct WaterIntakeProgressView: View {
 
 struct WaterIntakeView_Previews: PreviewProvider {
     static var previews: some View {
-        WaterIntakeView(dailyWaterIntakeGoal: 2.7) 
+        WaterIntakeView()
     }
 }

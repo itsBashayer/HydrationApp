@@ -7,9 +7,9 @@ struct NotificationPreferencesView: View {
     @State private var isStartAM: Bool = true
     @State private var isEndAM: Bool = true
     @State private var selectedBox: Int?
-
+    
     var body: some View {
-     //   NavigationView {
+      //  NavigationView {
             VStack(alignment: .leading, spacing: 20) {
                 HStack {
                     Spacer().frame(width: 10)
@@ -83,14 +83,14 @@ struct NotificationPreferencesView: View {
 
                 HStack {
                     Spacer()
-                 //   NavigationLink(destination: WaterIntakeView()) {
+                    NavigationLink(destination: WaterIntakeView()) {
                         Text("Start")
                             .padding(.vertical, 10)
                             .frame(width: 360, height: 50)
                             .background(Color(red: 0.192, green: 0.68, blue: 0.903))
                             .foregroundColor(.white)
                             .cornerRadius(10)
-                 //   }
+                    }
                     Spacer()
                 }
                 .padding(.bottom, 20)
@@ -179,8 +179,6 @@ struct NotificationPreferencesView: View {
         }
     }
 }
-
-
 
 struct NotificationPreferencesView_Previews: PreviewProvider {
     static var previews: some View {
