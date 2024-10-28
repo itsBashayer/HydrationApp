@@ -1,18 +1,40 @@
+
 import SwiftUI
+import UserNotifications
 
 struct WaterIntakeView: View {
     @State private var currentWaterIntake: Double = 0.0
     @State private var dailyWaterIntakeGoal: Double = 2.7 // Set a default value
     let defaults = UserDefaults.standard
-    
-    private let icons = [
-        "zzz",
-        "tortoise.fill",
-        "hare.fill",
-        "hands.clap.fill"
-    ]
 
+    private let icons = ["zzz", "tortoise.fill", "hare.fill", "hands.clap.fill"]
     private let changeAmount: Double = 0.1
+
+    enum NotificationType {
+        case motivational
+        case achievement
+        case nearingGoal // New type for nearing goal notification
+
+        var content: UNMutableNotificationContent {
+            let content = UNMutableNotificationContent()
+            switch self {
+            case .motivational:
+                content.title = "Stay Hydrated!"
+                content.body = "You're almost at 0.5L! Keep going!"
+                content.sound = .default
+            case .nearingGoal:
+                content.title = "Almost There!"
+                content.body = "You're at 90% of your daily goal!"
+                content.sound = .default
+            case .achievement:
+                content.title = "Great Job!"
+                content.body = "You've reached your goal for the day!"
+                content.sound = .default
+           
+            }
+            return content
+        }
+    }
 
     var body: some View {
         VStack(spacing: 10) {
@@ -21,7 +43,6 @@ struct WaterIntakeView: View {
                     .font(.system(size: 16))
                     .foregroundColor(Color(red: 0.384, green: 0.388, blue: 0.401))
                     .multilineTextAlignment(.leading)
-
                 Spacer()
             }
             .padding(.leading)
@@ -30,11 +51,9 @@ struct WaterIntakeView: View {
                 Text("\(currentWaterIntake, specifier: "%.1f") liter")
                     .font(.system(size: 24, weight: .bold))
                     .foregroundColor(currentWaterIntake >= dailyWaterIntakeGoal ? Color.green : Color(red: 0.1, green: 0.1, blue: 0.1))
-
                 Text(" / \(dailyWaterIntakeGoal, specifier: "%.1f") liter")
                     .font(.system(size: 24, weight: .bold))
                     .foregroundColor(Color(red: 0.1, green: 0.1, blue: 0.1))
-
                 Spacer()
             }
             .padding(.leading)
@@ -57,21 +76,14 @@ struct WaterIntakeView: View {
                     .foregroundColor(Color.black)
 
                 HStack {
-                    Button(action: {
-                        decreaseWaterIntake()
-                    }) {
+                    Button(action: decreaseWaterIntake) {
                         Text("-")
                             .font(.largeTitle)
                             .foregroundColor(Color.black)
                             .frame(width: 50, height: 50)
                     }
-
-                    Divider()
-                        .frame(height: 50)
-
-                    Button(action: {
-                        increaseWaterIntake()
-                    }) {
+                    Divider().frame(height: 50)
+                    Button(action: increaseWaterIntake) {
                         Text("+")
                             .font(.title)
                             .foregroundColor(Color.black)
@@ -86,11 +98,23 @@ struct WaterIntakeView: View {
             }
         }
         .padding()
-        .onAppear {
-            dailyWaterIntakeGoal = defaults.double(forKey: "waterIntake")
-            if dailyWaterIntakeGoal == 0 { // Set a default if not found
-                dailyWaterIntakeGoal = 2.7
+        .onAppear(perform: setupNotifications)
+    }
+
+    private func setupNotifications() {
+        // طلب إذن الإشعارات
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { granted, error in
+            if granted {
+                print("Permission granted")
+            } else if let error = error {
+                print("Error requesting permission: \(error)")
             }
+        }
+
+        // إعداد الهدف اليومي
+        dailyWaterIntakeGoal = defaults.double(forKey: "waterIntake")
+        if dailyWaterIntakeGoal == 0 {
+            dailyWaterIntakeGoal = 2.7
         }
     }
 
@@ -110,10 +134,38 @@ struct WaterIntakeView: View {
     private func increaseWaterIntake() {
         currentWaterIntake += changeAmount
         currentWaterIntake = min(currentWaterIntake, dailyWaterIntakeGoal)
+        checkNotifications()
     }
 
     private func decreaseWaterIntake() {
         currentWaterIntake = max(currentWaterIntake - changeAmount, 0)
+        checkNotifications()
+    }
+
+    private func checkNotifications() {
+        if currentWaterIntake >= 0.4 && currentWaterIntake < 0.5 {
+            scheduleNotification(type: .motivational)
+        }
+        if currentWaterIntake >= dailyWaterIntakeGoal {
+            scheduleNotification(type: .achievement)
+        }
+        if currentWaterIntake >= dailyWaterIntakeGoal * 0.9 && currentWaterIntake < dailyWaterIntakeGoal {
+            scheduleNotification(type: .nearingGoal)
+        }
+    }
+
+    private func scheduleNotification(type: NotificationType) {
+        let content = type.content
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 5, repeats: false) // Schedule after 5 seconds
+        let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
+
+        UNUserNotificationCenter.current().add(request) { error in
+            if let error = error {
+                print("Error scheduling notification: \(error)")
+            } else {
+                print("Notification scheduled: \(content.title)")
+            }
+        }
     }
 }
 
@@ -122,7 +174,7 @@ struct WaterIntakeProgressView: View {
     let dailyWaterIntakeGoal: Double
     let currentIcon: String
     let currentColor: Color
-
+    
     var body: some View {
         ZStack {
             Circle()
@@ -142,11 +194,5 @@ struct WaterIntakeProgressView: View {
                 .rotationEffect(Angle(degrees: 270))
                 .animation(.easeInOut, value: currentWaterIntake)
         }
-    }
-}
-
-struct WaterIntakeView_Previews: PreviewProvider {
-    static var previews: some View {
-        WaterIntakeView()
     }
 }

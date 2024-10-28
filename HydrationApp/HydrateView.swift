@@ -42,6 +42,7 @@ struct HydrateView: View {
                                 .foregroundColor(.gray)
                         }
                         .padding(.trailing, 10)
+                      
                     }
                 }
                 .frame(height: 20)
@@ -51,7 +52,7 @@ struct HydrateView: View {
 
                 Spacer()
 
-                NavigationLink(destination: NotificationPreferencesView(), isActive: $navigateToNotificationPreferences) {
+                NavigationLink(destination: NP(), isActive: $navigateToNotificationPreferences) {
                     Button(action: {
 //                        dailyWaterIntakeGoal = calculateWaterIntake()
                         navigateToNotificationPreferences = true
