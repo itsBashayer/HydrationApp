@@ -68,4 +68,7 @@ The app includes three types of notifications:
 │   ├── NotificationPreferencesView.swift  # View for setting notification preferences
 │   └── WaterTrackerView.swift       # Main view for tracking water intake
 ```
-
+If you have any questions or suggestions, feel free to reach out to me!
+### 📞 Contact me:
+Email: alfuhaidbashayeer@gmail.com
+Linkedin: https://www.linkedin.com/in/bashaer-a-665b86325?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app
