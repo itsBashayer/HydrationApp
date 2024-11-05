@@ -1,9 +1,11 @@
-Hydration Tracking App
+💧 Hydration Tracking App
 
 <img width="854" alt="Screenshot 1446-05-03 at 11 17 01 AM" src="https://github.com/user-attachments/assets/2c6db8c0-e28e-470a-9163-89da3cd31dd2">
 
 
-### 💧 Hydration Tracker App
+
+
+
 
 An iOS application designed to assist users in monitoring their daily water consumption based on their body weight. The app allows users to set notification reminders, helping them stay motivated to meet their hydration goals. Whether you're at home, at work, or on the go, the Hydration Tracker App makes it easy to maintain healthy drinking habits. Start your journey towards better hydration today and feel the difference!
 
